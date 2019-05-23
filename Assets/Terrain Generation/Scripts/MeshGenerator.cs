@@ -1,16 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEditor;
 
 [RequireComponent(typeof(MeshFilter))]
 public class MeshGenerator : MonoBehaviour {
 
 	private MeshFilter meshFilter;
-	private Mesh mesh;
 
-	void Start() {
+	void Awake() {
 		meshFilter = GetComponent<MeshFilter>();
-		mesh = new Mesh();
+
+		GetComponent<MeshRenderer>().sortingLayerName = "Player";
 	}
 
 	private void OnEnable() {
@@ -22,10 +21,12 @@ public class MeshGenerator : MonoBehaviour {
 	}
 
 	private void GenerateMesh(EdgeCollider2D collider) {
+		Mesh mesh = new Mesh();
+
 		Vector3[] meshVertices = new Vector3[collider.pointCount + 1];
 		Vector2[] uvs = new Vector2[collider.pointCount + 1];
 
-		meshVertices[collider.pointCount] = collider.transform.position;
+		meshVertices[collider.pointCount] = Vector3.zero;
 		uvs[collider.pointCount] = new Vector2(0.5f, 0.5f);
 
 		float angle = Mathf.Deg2Rad * 360f / collider.pointCount;
@@ -61,7 +62,7 @@ public class MeshGenerator : MonoBehaviour {
 			meshTriangles[triangleIndex++] = j;
 			meshTriangles[triangleIndex++] = j - 1;
 		}
-
+		
 		mesh.Clear();
 
 		mesh.vertices = meshVertices;
@@ -71,6 +72,19 @@ public class MeshGenerator : MonoBehaviour {
 		//mesh.RecalculateNormals();
 
 		meshFilter.mesh = mesh;
+
+		//SaveMesh(mesh);
+		MeshRenderer renderer = GetComponent<MeshRenderer>();
+		print(renderer.sortingLayerName);
+		renderer.sortingLayerName = "Player";
+		print(renderer.sortingLayerName);
 	}
 
+	private void SaveMesh(Mesh mesh) {
+		string path = EditorUtility.SaveFilePanel("Save Separate Mesh Asset", "Assets/", "TerrainMesh", "asset"); ;
+		path = FileUtil.GetProjectRelativePath(path);
+
+		AssetDatabase.CreateAsset(mesh, path);
+		AssetDatabase.SaveAssets();
+	}
 }
