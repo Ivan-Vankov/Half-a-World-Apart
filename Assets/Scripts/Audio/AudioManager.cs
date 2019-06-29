@@ -9,6 +9,7 @@ public class AudioManager : MonoBehaviour {
 	public AudioSource throwSound;
 	public AudioSource explosionSound;
 	public AudioSource stepsSound;
+	public AudioSource hitSound;
 
     void Start() {
         if (instance == null) {
@@ -31,5 +32,9 @@ public class AudioManager : MonoBehaviour {
 
 	public void StopStepsSound() {
 		stepsSound.loop = false;
+	}
+
+	public void PlayHitSound() {
+		hitSound.Play();
 	}
 }

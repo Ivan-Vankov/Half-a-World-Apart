@@ -93,7 +93,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0.023359299, y: 0}
@@ -132,7 +132,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3032213dfb26111468a81c4ddb8b2937, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  explosionEffect: {fileID: 3828188269062103520, guid: f30254afbe3a9f64a8cd17f5ccdfb287,
+  explosionEffect: {fileID: 2310396877573117412, guid: f98addddca420c943b4c7d68b2888dd1,
+    type: 3}
+  explosionCircle: {fileID: 8205510739422346596, guid: bc2bf29ef3028a2429317027bbd9ded5,
     type: 3}
 --- !u!96 &7321726877057640438
 TrailRenderer:

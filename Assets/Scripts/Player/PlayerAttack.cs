@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerTurnManager))]
 public class PlayerAttack : MonoBehaviour {
 
 	public GameObject weapon;
@@ -10,19 +11,24 @@ public class PlayerAttack : MonoBehaviour {
 
 	public Transform weaponSpawnPositionRight;
 	public Transform weaponSpawnPositionLeft;
+	public Transform playerCenter;
 
 	private float initialForce = 700f;
+
+	private PlayerTurnManager turnManager;
 
 	private AudioSource throwSound;
 
 	private void Start() {
+		turnManager = GetComponent<PlayerTurnManager>();
 		playerDirection = GetComponent<PlayerMovement>();
 		throwSound = GetComponent<AudioSource>();
 	}
 	
 	private void Update() {
-        if (Input.GetKeyDown(KeyCode.Mouse0)) {
+        if (turnManager.IsYourTurn && Input.GetKeyDown(KeyCode.Mouse0)) {
 			ThrowWeapon();
+			turnManager.IsYourTurn = false;
 		}
     }
 
@@ -40,12 +46,12 @@ public class PlayerAttack : MonoBehaviour {
 
 		Vector2 force = new Vector2(direction.x, direction.y);
 		spawnedWeapon.AddForce(force.normalized * initialForce);
-		spawnedWeapon.AddTorque(100);
+		spawnedWeapon.AddTorque(1000);
 	}
 
 	private Vector3 GetWeaponSpawnPosition(Vector3 mousePosition) {
-		Vector3 right = weaponSpawnPositionRight.position - transform.position;
-		Vector3 toMouse = mousePosition - transform.position;
+		Vector3 right = weaponSpawnPositionRight.position - playerCenter.position;
+		Vector3 toMouse = mousePosition - playerCenter.position;
 
 		if (Vector3.Dot(right, toMouse) > 0) {
 			return weaponSpawnPositionRight.position;

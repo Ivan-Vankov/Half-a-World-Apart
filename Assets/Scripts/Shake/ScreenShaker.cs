@@ -15,7 +15,7 @@ public class ScreenShaker : MonoBehaviour {
 	}
 
 	public void ShakeScreen() {
-		ShakeScreen(10, 0.2f, 0.10f);
+		ShakeScreen(5, 0.15f, 0.12f);
 	}
 
 	public void ShakeScreen(float intensity, float duration, float easeInTime) {
@@ -30,8 +30,8 @@ public class ScreenShaker : MonoBehaviour {
 
 	private IEnumerator Shake(float initialIntensity, float duration, float easeInTime) {
 		isShaking = true;
-
-		float easeIn = Time.deltaTime;
+		
+		float easeInEnd = Time.time + easeInTime;
 		
 		float xShakeSeed = Random.value * 100;
 		float yShakeSeed = Random.value * 100;
@@ -44,9 +44,8 @@ public class ScreenShaker : MonoBehaviour {
 
 			float intensity = initialIntensity * (duration - (Time.time - start)) / duration;
 
-			if (Time.time < start + easeIn) {
-				intensity *= easeIn;
-				easeIn += Time.deltaTime;
+			if (Time.time < easeInEnd) {
+				intensity *= (Time.time - start) / easeInTime;
 			}
 
 			// * 2 - 1 in order to shift the offsets from [0,1] to [-1,1]

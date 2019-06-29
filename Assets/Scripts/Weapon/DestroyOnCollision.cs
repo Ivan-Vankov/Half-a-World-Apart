@@ -5,8 +5,22 @@ using UnityEngine;
 public class DestroyOnCollision : MonoBehaviour {
 
 	public Exploder explosionEffect;
+	public GameObject explosionCircle;
 
-	private void OnCollisionEnter2D(Collision2D collision) {
+	private static int validCollisionLayerMask;
+
+	private void Awake() {
+		validCollisionLayerMask = LayerMask.GetMask("Player Collider", "Terrain Collider");
+	}
+
+	private void OnTriggerEnter2D(Collider2D collision) {
+		int collisionMask = 1 << collision.gameObject.layer;
+
+		if ((validCollisionLayerMask & collisionMask) == 0) {
+			//print("Collided with " + collision.gameObject.name);
+			return;
+		}
+
 		AudioManager.instance.PlayExplosionSound();
 		ScreenShaker.instance.ShakeScreen();
 
@@ -14,12 +28,19 @@ public class DestroyOnCollision : MonoBehaviour {
 		GetComponent<CircleCollider2D>().enabled = false;
 		GetComponent<Rigidbody2D>().simulated = false;
 		float fadeTime = GetComponent<TrailRenderer>().time;
-		
-		Vector3 rotation = transform.position - collision.collider.transform.position;
-		GameObject explosion = Instantiate(explosionEffect, 
+
+		Vector3 rotation = transform.position - collision.transform.position;
+		GameObject explosion = Instantiate(explosionEffect,
 			transform.position, Quaternion.LookRotation(rotation)).gameObject;
+
+		SpawnExplosionCircle(collision.transform.position);
 
 		Destroy(explosion, fadeTime);
 		Destroy(gameObject, fadeTime);
+	}
+
+	public void SpawnExplosionCircle(Vector3 position) {
+		GameObject spawnedExplosionCircle = Instantiate(explosionCircle, transform.position, Quaternion.identity);
+		Destroy(spawnedExplosionCircle, 0.5f);
 	}
 }
